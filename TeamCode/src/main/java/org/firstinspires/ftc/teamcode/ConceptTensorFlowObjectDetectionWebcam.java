@@ -64,11 +64,11 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
      *  FreightFrenzy_BC.tflite  0: Ball,  1: Cube
      *  FreightFrenzy_DM.tflite  0: Duck,  1: Marker
      */
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tfile";
+    private static final String TFOD_MODEL_ASSET = "model_20221121_114203.tflite";
     private static final String[] LABELS = {
-            "1 Bulb",
-            "2 Bulb",
-            "3 Pannel"
+            "red",
+            "orange",
+            "green"
     };
 
     /*
@@ -118,7 +118,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(1.0, 16.0/9.0);
+            tfod.setZoom(1, 16.0/9.0);
         }
 
         /** Wait for the game to begin */
