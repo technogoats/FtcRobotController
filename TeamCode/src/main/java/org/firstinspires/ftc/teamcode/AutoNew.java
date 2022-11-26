@@ -37,7 +37,7 @@ public class AutoNew extends LinearOpMode {
     private Servo rightClaw;
 
     //Wheel stuff
-    public final double wheelPower = -0.5;
+    public final double wheelPower = -1;
     public final double turnSpeed = 0.5;
     private int distance = 0;
 
@@ -66,32 +66,69 @@ public class AutoNew extends LinearOpMode {
 
 
        Trajectory splineToA = drive.trajectoryBuilder(new Pose2d())
-            .splineToConstantHeading(new Vector2d(5, 17), Math.toRadians(0))
-               .forward(40)
+            .splineToConstantHeading(new Vector2d(5, 17.5), Math.toRadians(0))
+             .forward(40)
             .build();
 
-
         Trajectory splineToB = drive.trajectoryBuilder(splineToA.end())
-                .lineToSplineHeading(new Pose2d(50,10, Math.toRadians(-45)))
+                .lineToSplineHeading(new Pose2d(57,9, Math.toRadians(-40)))
+                //55 12
                 .build();
 
+       Trajectory splineToC = drive.trajectoryBuilder(splineToB.end())
+                .lineToSplineHeading(new Pose2d(47.5,17, Math.toRadians(-90)))
+                .build();
 
+       Trajectory lineToD = drive.trajectoryBuilder(splineToC.end())
+                .forward(46)
+                .build();
 
-        //Trajectory left = drive.trajectoryBuilder(new Pose2d())
-        //        .strafeLeft(25)
-         //       .build();
+       Trajectory splineToE = drive.trajectoryBuilder(lineToD.end())
+                .lineToLinearHeading(new Pose2d(47.5,0, Math.toRadians(34)))
+                .build();
+
+        Trajectory lineToF = drive.trajectoryBuilder(splineToE.end())
+                .forward(9)
+                .build();
+
+        Trajectory lineToFG = drive.trajectoryBuilder(splineToE.end())
+                .back(1)
+                .build();
+
+        Trajectory splineToG = drive.trajectoryBuilder(lineToFG.end())
+                .lineToLinearHeading(new Pose2d(47,-30, Math.toRadians(-90)))
+                .build();
+
+        Trajectory parkAt2 = drive.trajectoryBuilder(lineToF.end())
+                .lineToLinearHeading(new Pose2d(47.5,-3, Math.toRadians(0)))
+                .build();
+
+        Trajectory parkAt1 = drive.trajectoryBuilder(parkAt2.end())
+                .strafeRight(23)
+                .build();
+
+        Trajectory parkAt3 = drive.trajectoryBuilder(parkAt2.end())
+                .strafeRight(-29)
+                .build();
 
         waitForStart();
 
         while(opModeIsActive()) {
-            //closeClaw();
-            //raiseSlideCone();
             drive.followTrajectory(splineToA);
-            drive.followTrajectory(splineToB);
             //raiseSlideHighJunk();
+            //sleep(2000);
+            drive.followTrajectory(splineToB);
+            drive.followTrajectory(splineToC);
+            drive.followTrajectory(lineToD);
+            drive.followTrajectory(splineToE);
+            drive.followTrajectory(lineToF);
+            drive.followTrajectory(lineToFG);
+            drive.followTrajectory(splineToG);
+            sleep(30000);
 
 
-            break;
+
+            //break;
 
         }
 
@@ -316,6 +353,22 @@ public class AutoNew extends LinearOpMode {
         motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        closeClaw();
+
+        /*
+        slideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        slideLeft.setTargetPosition(500);
+
+        slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideRight.setTargetPosition(450);
+        slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        slideRight.setPower(0.8);
+        slideLeft.setPower(0.8);
+
+         */
 
     }
 
