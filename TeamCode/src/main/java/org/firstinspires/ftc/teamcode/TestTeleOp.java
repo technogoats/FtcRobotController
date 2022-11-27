@@ -37,8 +37,8 @@ public class TestTeleOp extends LinearOpMode {
     private Servo rightClaw;
 
     //Wheel stuff
-    public final double wheelPower = -0.25;
-    public final double turnSpeed = 0.25;
+    public final double wheelPower = -0.5;
+    public final double turnSpeed = 0.5;
 
     private Blinker expansion_Hub_3;
 
@@ -99,68 +99,40 @@ public class TestTeleOp extends LinearOpMode {
             } else if (gamepad1.right_bumper) {
                 //right turn
                 telemetry.addData("right bumper pressed", "");
-                turnRight();
+                raiseSlideHighJunk();
 
             } else if (gamepad1.left_bumper) {
                 //left turn
                 telemetry.addData("left bumper pressed", "");
-                turnLeft();
-
-            } else if (gamepad1.right_trigger > 0) {
-                //lowerSlide();
-
-            } else if (gamepad1.left_trigger > 0) {
-               // RS3();
-
-            } else if (gamepad1.left_stick_button) {
-               // RS2();
-
-            } else if (gamepad1.right_stick_button) {
-               // RS1();
-
-            } else if (gamepad1.x) {
-                leftClaw.setDirection(Servo.Direction.FORWARD);
-                leftClaw.setPosition(0.6);
-                //double i = 0.1;
-                //for (i = 0.1; i < 1; i += 0.1) {
-                sleep(3000);
-                leftClaw.setPosition(0.7);
-                //}
-
-
-                //start intake
-
-                //intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-                //intakeMotor.setPower(0.8);
-
-            } else if (gamepad1.b) {
-                rightClaw.setDirection(Servo.Direction.FORWARD);
-                rightClaw.setPosition(0);
-                //double i = 0.1;
-                //for (i = 0.1; i < 1; i += 0.1) {
-                sleep(3000);
-                rightClaw.setPosition(0.2);
-
-                //reverse intake
-               // intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-                //intakeMotor.setPower(0.8);
-
-            } else if (gamepad1.a) {
+                closeClaw();
                 lowerSlide();
 
+            } else if (gamepad1.right_trigger > 0) {
+                closeClaw();
+
+            } else if (gamepad1.left_trigger > 0) {
+                openClaw();
+
+            } else if (gamepad1.left_stick_button) {
+
+            } else if (gamepad1.right_stick_button) {
+
+            } else if (gamepad1.x) {
+
+            } else if (gamepad1.b) {
+                openClawCap();
+
+            } else if (gamepad1.a) {
+                //small junction
+
             } else if (gamepad1.y) {
-                raiseSlide();
+                //medium junction
 
             } else if (gamepad2.x) {
-                //let go
-                //raiseBasket();
 
             } else if (gamepad2.y) {
-                //lowerBasket();
 
             } else if (gamepad2.a) {
-                //let go
-                //lockBasket();
 
             } else {
                 motorBL.setPower(0);
@@ -222,24 +194,42 @@ public class TestTeleOp extends LinearOpMode {
         motorFL.setPower(-wheelPower);
     }
 
-    public void raiseSlide() {
+    public void raiseSlideHighJunk() {
         //int i = 50;
         //for (i = 50; i < 1000; i += 100) {
         sleep(500);
         slideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        slideLeft.setTargetPosition(3000);
+        slideLeft.setTargetPosition(3100);
 
         slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        slideRight.setTargetPosition(2950);
+        slideRight.setTargetPosition(3050);
         slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        slideRight.setPower(0.8);
-        slideLeft.setPower(0.8);
+        slideRight.setPower(0.9);
+        slideLeft.setPower(0.9);
+        //}
+    }
+
+    public void raiseSlideCone() {
+        //int i = 50;
+        //for (i = 50; i < 1000; i += 100) {
+        sleep(500);
+        slideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        slideLeft.setTargetPosition(200);
+
+        slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideRight.setTargetPosition(150);
+        slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        slideRight.setPower(0.9);
+        slideLeft.setPower(0.9);
         //}
     }
 
     public void lowerSlide() {
+        closeClaw();
         sleep(500);
         slideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         slideLeft.setTargetPosition(5);
@@ -250,8 +240,27 @@ public class TestTeleOp extends LinearOpMode {
         slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        slideLeft.setPower(0.8);
-        slideRight.setPower(0.8);
+        slideLeft.setPower(0.9);
+        slideRight.setPower(0.9);
+    }
+
+    public void closeClaw(){
+        leftClaw.setPosition(0.62);
+        rightClaw.setPosition(0.4);
+    }
+
+    public void openClaw(){
+        leftClaw.setDirection(Servo.Direction.FORWARD);
+        leftClaw.setPosition(0.55);
+        rightClaw.setDirection(Servo.Direction.FORWARD);
+        rightClaw.setPosition(0.43);
+    }
+
+    public void openClawCap(){
+        leftClaw.setDirection(Servo.Direction.FORWARD);
+        leftClaw.setPosition(0.52);
+        rightClaw.setDirection(Servo.Direction.FORWARD);
+        rightClaw.setPosition(0.46);
     }
 
  /*

@@ -47,6 +47,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.88976; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
+
     public static double TRACK_WIDTH = 12.97; // in // previous: 16.34 and 11.5
 
     /*
@@ -66,31 +67,11 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    /*
-     * Note from LearnRoadRunner.com:
-     * The velocity and acceleration constraints were calculated based on the following equation:
-     * ((MAX_RPM / 60) * GEAR_RATIO * WHEEL_RADIUS * 2 * Math.PI) * 0.85
-     * Resulting in 52.48180821614297 in/s.
-     * This is only 85% of the theoretical maximum velocity of the bot, following the recommendation above.
-     * This is capped at 85% because there are a number of variables that will prevent your bot from actually
-     * reaching this maximum velocity: voltage dropping over the game, bot weight, general mechanical inefficiencies, etc.
-     * However, you can push this higher yourself if you'd like. Perhaps raise it to 90-95% of the theoretically
-     * max velocity. The theoretically maximum velocity is 61.74330378369762 in/s.
-     * Just make sure that your bot can actually reach this maximum velocity. Path following will be detrimentally
-     * affected if it is aiming for a velocity not actually possible.
-     *
-     * The maximum acceleration is somewhat arbitrary and it is recommended that you tweak this yourself based on
-     * actual testing. Just set it at a reasonable value and keep increasing until your path following starts
-     * to degrade. As of now, it simply mirrors the velocity, resulting in 52.48180821614297 in/s/s
-     *
-     * Maximum Angular Velocity is calculated as: maximum velocity / trackWidth * (180 / Math.PI) but capped at 360°/s.
-     * You are free to raise this on your own if you would like. It is best determined through experimentation.
 
-     */
-    public static double MAX_VEL = 56.48180821614297;
-    public static double MAX_ACCEL = 56.48180821614297;
-    public static double MAX_ANG_VEL = 17.188734536943613; //Math.toRadians(184.02607784577722);
-    public static double MAX_ANG_ACCEL = Math.toRadians(184.02607784577722);
+    public static double MAX_VEL = 56.481;
+    public static double MAX_ACCEL = 56.481;
+    public static double MAX_ANG_VEL = 22;
+    public static double MAX_ANG_ACCEL = 22;
 
 
     public static double encoderTicksToInches(double ticks) {
