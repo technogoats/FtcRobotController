@@ -212,8 +212,8 @@ public class TestTeleOp extends LinearOpMode {
         slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        slideRight.setPower(0.8);
-        slideLeft.setPower(0.8);
+        slideRight.setPower(0.9);
+        slideLeft.setPower(0.9);
         //}
     }
 
@@ -229,8 +229,8 @@ public class TestTeleOp extends LinearOpMode {
         slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        slideRight.setPower(0.8);
-        slideLeft.setPower(0.8);
+        slideRight.setPower(0.9);
+        slideLeft.setPower(0.9);
         //}
     }
 
@@ -245,8 +245,8 @@ public class TestTeleOp extends LinearOpMode {
         slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        slideLeft.setPower(0.8);
-        slideRight.setPower(0.8);
+        slideLeft.setPower(0.9);
+        slideRight.setPower(0.9);
     }
 
     public void closeClaw(){

@@ -64,11 +64,11 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
      *  FreightFrenzy_BC.tflite  0: Ball,  1: Cube
      *  FreightFrenzy_DM.tflite  0: Duck,  1: Marker
      */
-    private static final String TFOD_MODEL_ASSET = "model_20221121_114203.tflite";
+    private static final String TFOD_MODEL_ASSET = "model_20221126_114134.tflite";
     private static final String[] LABELS = {
-            "red",
+            "green",
             "orange",
-            "green"
+            "red"
     };
 
     /*
@@ -180,9 +180,9 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.75f;
+        tfodParameters.minResultConfidence = 0.6f;
         tfodParameters.isModelTensorFlow2 = true;
-        tfodParameters.inputSize = 300;
+        tfodParameters.inputSize = 640;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
