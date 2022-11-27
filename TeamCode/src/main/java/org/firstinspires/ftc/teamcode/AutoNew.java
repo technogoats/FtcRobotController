@@ -138,7 +138,7 @@ public class AutoNew extends LinearOpMode {
         while (opModeIsActive()) {
             raiseSlideHighJunk();
             drive.followTrajectory(splineToA);
-           // drive.followTrajectory(splineToAB);
+            // drive.followTrajectory(splineToAB);
 
             drive.followTrajectory(splineToB);
             sleep(1000);

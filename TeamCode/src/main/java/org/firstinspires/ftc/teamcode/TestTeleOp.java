@@ -99,12 +99,13 @@ public class TestTeleOp extends LinearOpMode {
             } else if (gamepad1.right_bumper) {
                 //right turn
                 telemetry.addData("right bumper pressed", "");
-                turnRight();
+                raiseSlideHighJunk();
 
             } else if (gamepad1.left_bumper) {
                 //left turn
                 telemetry.addData("left bumper pressed", "");
-                turnLeft();
+                closeClaw();
+                lowerSlide();
 
             } else if (gamepad1.right_trigger > 0) {
                 closeClaw();
@@ -113,32 +114,25 @@ public class TestTeleOp extends LinearOpMode {
                 openClaw();
 
             } else if (gamepad1.left_stick_button) {
-               // RS2();
 
             } else if (gamepad1.right_stick_button) {
-               // RS1();
 
             } else if (gamepad1.x) {
-               raiseSlideHighJunk();
 
             } else if (gamepad1.b) {
-
+                openClawCap();
 
             } else if (gamepad1.a) {
-                closeClaw();
-                lowerSlide();
+                //small junction
 
             } else if (gamepad1.y) {
-                raiseSlideCone();
+                //medium junction
 
             } else if (gamepad2.x) {
 
-
             } else if (gamepad2.y) {
 
-
             } else if (gamepad2.a) {
-
 
             } else {
                 motorBL.setPower(0);
@@ -235,6 +229,7 @@ public class TestTeleOp extends LinearOpMode {
     }
 
     public void lowerSlide() {
+        closeClaw();
         sleep(500);
         slideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         slideLeft.setTargetPosition(5);
@@ -259,6 +254,13 @@ public class TestTeleOp extends LinearOpMode {
         leftClaw.setPosition(0.55);
         rightClaw.setDirection(Servo.Direction.FORWARD);
         rightClaw.setPosition(0.43);
+    }
+
+    public void openClawCap(){
+        leftClaw.setDirection(Servo.Direction.FORWARD);
+        leftClaw.setPosition(0.52);
+        rightClaw.setDirection(Servo.Direction.FORWARD);
+        rightClaw.setPosition(0.46);
     }
 
  /*
