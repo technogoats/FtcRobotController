@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
+
+import  java.lang.Math;
 
 @TeleOp
 
@@ -39,6 +42,11 @@ public class TestTeleOp extends LinearOpMode {
     //Wheel stuff
     public final double wheelPower = -0.5;
     public final double turnSpeed = 0.5;
+
+    double   leftX = 0, leftY = 0, V = 0, W = 0, Right = 0, Left = 0;
+    double r, robotAngle, V1, V2, V3, V4;
+
+    public double power = 0.95;
 
     private Blinker expansion_Hub_3;
 
@@ -134,7 +142,38 @@ public class TestTeleOp extends LinearOpMode {
 
             } else if (gamepad2.a) {
 
-            } else {
+            }
+            else if (gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0) {
+
+                leftX = gamepad1.right_stick_x;
+                leftY = gamepad1.left_stick_y;
+
+                //telemetry.addData("Mode", "running");
+                //telemetry.addData("sticks", "  left x=" + gamepad1.left_stick_x + "  right y=" + gamepad1.left_stick_y);
+                //telemetry.update();
+
+                motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
+                motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
+
+                leftX = scaleInput(leftX);
+                leftY = scaleInput(leftY);
+
+                r = Math.hypot(leftX, leftY);
+                robotAngle = Math.atan2(leftY, leftX) - Math.PI / 4;
+
+                V1 = r * Math.cos(robotAngle) + leftX;
+                V2 = r * Math.sin(robotAngle) - leftX;
+                V3 = r * Math.sin(robotAngle) + leftX;
+                V4 = r * Math.cos(robotAngle) - leftX;
+
+                telemetry.addData("V1 Clipped = ", + V1 + "V2 Clipped=" + V2 + "V3 Clipped = ", + V3 + "V4 Clipped=" + V4);
+
+                motorBL.setPower(power *(Range.clip(V3, -1, 1)));
+                motorBR.setPower(power *(Range.clip(V4, -1, 1)));
+                motorFL.setPower(power *(Range.clip(V1, -1, 1)));
+                motorFR.setPower(power *(Range.clip(V2, -1, 1)));
+            }
+            else {
                 motorBL.setPower(0);
                 motorBR.setPower(0);
                 motorFR.setPower(0);
@@ -374,4 +413,22 @@ public class TestTeleOp extends LinearOpMode {
 
     }
 
+    private double scaleInput(double dVal)  {
+        double[] scaleArray = { 0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24,
+                0.30, 0.36, 0.43, 0.50, 0.60, 0.72, 0.85, 1.00, 1.00 };
+        int index = (int) (dVal * 16.0);
+        if (index < 0) {
+            index = -index;
+        }
+        if (index > 16) {
+            index = 16;
+        }
+        double dScale = 0.0;
+        if (dVal < 0) {
+            dScale = -scaleArray[index];
+        } else {
+            dScale = scaleArray[index];
+        }
+        return dScale;
+    }
 }
