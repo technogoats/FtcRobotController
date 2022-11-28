@@ -13,11 +13,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-
 import java.util.List;
 
 @Autonomous
@@ -78,107 +79,41 @@ public class AutoMotions extends LinearOpMode {
         horizontal = hardwareMap.get(DcMotor.class, "motorBR");
 
         expansion_Hub_3 = hardwareMap.get(Blinker.class, "Expansion Hub 3");
+
+
+        initVuforia();
+        initTfod();
         initDriveTrain();
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-
-        Trajectory splineToA = drive.trajectoryBuilder(new Pose2d())
-                .splineToConstantHeading(new Vector2d(5, 17.5), Math.toRadians(0))
-                .forward(40)
-                .build();
-
-        Trajectory splineToB = drive.trajectoryBuilder(splineToA.end())
-                .lineToSplineHeading(new Pose2d(57, 9, Math.toRadians(-40)))
-                //55 12
-                .build();
-
-        Trajectory splineToC = drive.trajectoryBuilder(splineToB.end())
-                .lineToSplineHeading(new Pose2d(47.5, 17, Math.toRadians(-90)))
-                .build();
-
-        Trajectory splineToD = drive.trajectoryBuilder(splineToC.end())
-                .forward(46)
-                .build();
-
-        Trajectory splineToE = drive.trajectoryBuilder(splineToD.end())
-                .lineToLinearHeading(new Pose2d(47.5, 0, Math.toRadians(34)))
-                .build();
-
-        Trajectory splineToF = drive.trajectoryBuilder(splineToE.end())
-                .forward(9)
-                .build();
-
-        Trajectory splineToFG = drive.trajectoryBuilder(splineToE.end())
-                .back(1)
-                .build();
-
-        Trajectory splineToG = drive.trajectoryBuilder(splineToFG.end())
-                .lineToLinearHeading(new Pose2d(47, -30, Math.toRadians(-90)))
-                .build();
-
-        Trajectory splineToH = drive.trajectoryBuilder(splineToG.end())
-                .lineToLinearHeading(new Pose2d(47.5, 0, Math.toRadians(34)))
-                .build();
-
-        Trajectory parkAt2 = drive.trajectoryBuilder(splineToH.end())
-                .lineToLinearHeading(new Pose2d(47.5, -3, Math.toRadians(0)))
-                .build();
-
-        Trajectory parkAt1 = drive.trajectoryBuilder(parkAt2.end())
-                .strafeRight(23)
-                .build();
-
-        Trajectory parkAt3 = drive.trajectoryBuilder(parkAt2.end())
-                .strafeRight(-29)
-                .build();
-
-        waitForStart();
-
-        while (opModeIsActive()) {
-            if (tfod != null) {
-                // getUpdatedRecognitions() will return null if no new information is available since
-                // the last time that call was made.
-                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                if (updatedRecognitions != null) {
-                    telemetry.addData("# Objects Detected", updatedRecognitions.size());
-
-                    // step through the list of recognitions and display image position/size information for each one
-                    // Note: "Image number" refers to the randomized image orientation/number
-                    for (Recognition recognition : updatedRecognitions) {
-                        double col = (recognition.getLeft() + recognition.getRight()) / 2;
-                        double row = (recognition.getTop() + recognition.getBottom()) / 2;
-                        double width = Math.abs(recognition.getRight() - recognition.getLeft());
-                        double height = Math.abs(recognition.getTop() - recognition.getBottom());
-
-                        telemetry.addData("", " ");
-                        telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-                        telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
-                        telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
-                    }
-                    telemetry.update();
-                }
-            }
-
-
-            drive.followTrajectory(splineToA);
-            //raiseSlideHighJunk();
-            //sleep(2000);
-            drive.followTrajectory(splineToB);
-            drive.followTrajectory(splineToC);
-            drive.followTrajectory(splineToD);
-            drive.followTrajectory(splineToE);
-            drive.followTrajectory(splineToF);
-            drive.followTrajectory(splineToFG);
-            drive.followTrajectory(splineToG);
-            drive.followTrajectory(splineToH);
-            drive.followTrajectory(parkAt2);
-            drive.followTrajectory(parkAt1);
-            sleep(30000);
-
-            //break;
+        if (tfod != null) {
+            tfod.activate();
+            tfod.setZoom(1, 16.0/9.0);
 
         }
+
+        waitForStart();
+        sleep(3000);
+
+        if (parkPos() == 1){
+            telemetry.addData("Pos: ", parkPos());
+            telemetry.update();
+        }
+        else if (parkPos() == 2){
+            telemetry.addData("Pos: ", parkPos());
+            telemetry.update();
+
+        }
+        else if (parkPos() == 3){
+            telemetry.addData("Pos: ", parkPos());
+            telemetry.update();
+        }
+        else if (parkPos() == 0){
+            telemetry.addData("Pos: ", parkPos());
+            telemetry.update();
+        }
+        sleep(30000);
 
     }
 
@@ -281,99 +216,19 @@ public class AutoMotions extends LinearOpMode {
         slideRight.setPower(0.8);
     }
 
-    public void closeClaw(){
+    public void closeClaw() {
         leftClaw.setPosition(0.62);
         rightClaw.setPosition(0.4);
     }
 
-    public void openClaw(){
+    public void openClaw() {
         leftClaw.setDirection(Servo.Direction.FORWARD);
         leftClaw.setPosition(0.55);
         rightClaw.setDirection(Servo.Direction.FORWARD);
         rightClaw.setPosition(0.43);
     }
 
- /*
-    public void RS3() {
-        //linearSlide.setTargetPosition(500);
-        // int i = 50;
-        //for (i = 50; i < 1000; i += 100) {
-        Basket.setPosition(0.8);
-        sleep(500);
-        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        linearSlide.setTargetPosition(1750);
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(0.9);
-    }
-
-    public void RS1() {
-        //linearSlide.setTargetPosition(500);
-
-        // int i = 50;
-        //for (i = 50; i < 1000; i += 100) {
-        Basket.setPosition(0.8);
-        sleep(500);
-        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        // 600 with 1 inch distance works
-        linearSlide.setTargetPosition(600);
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(0.9);
-
-    }
-
-    public void RS2() {
-        //linearSlide.setTargetPosition(500);
-
-        // int i = 50;
-        //for (i = 50; i < 1000; i += 100) {
-        Basket.setPosition(0.8);
-        sleep(500);
-        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        linearSlide.setTargetPosition(900);
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(0.9);
-    }
-
-    public void lowerSlide() {
-        Basket.setPosition(0.8);
-        sleep(1000);
-        linearSlide.setTargetPosition(20);
-        linearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(0.9);
-        sleep(1000);
-        linearSlide.setTargetPosition(0);
-        linearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(0.9);
-    }
-
-    public void raiseBasket() {
-        // Basket.setDirection(Servo.Direction.FORWARD);
-        Basket.setPosition(0);
-    }
-
-    public void lowerBasket() {
-        // Basket.setDirection(Servo.Direction.FORWARD);
-        // Basket.setPosition(0.2);
-        // Basket.setDirection(Servo.Direction.REVERSE);
-        Basket.setPosition(0.8);
-    }
-
-    public void lockBasket() {
-        Basket.setPosition(0.8);
-        sleep(500);
-        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        linearSlide.setTargetPosition(100);
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(0.9);
-    }
-
-
-  */
-
     private void initDriveTrain() {
-
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -404,7 +259,8 @@ public class AutoMotions extends LinearOpMode {
 
         closeClaw();
 
-        /*
+        sleep(1000);
+
         slideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         slideLeft.setTargetPosition(500);
 
@@ -415,9 +271,74 @@ public class AutoMotions extends LinearOpMode {
 
         slideRight.setPower(0.8);
         slideLeft.setPower(0.8);
-
-         */
-
     }
 
+    private void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
+    }
+
+    /**
+     * Initialize the TensorFlow Object Detection engine.
+     */
+    private void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.6f;
+        tfodParameters.isModelTensorFlow2 = true;
+        tfodParameters.inputSize = 640;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+
+        // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
+        // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+    }
+
+    public int parkPos() {
+        if (tfod == null)
+            telemetry.addData("tfod is not active  ", "");
+        else
+            telemetry.addData("tfod is  active  ", "");
+        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+        int parkPos = 0;
+
+        if (updatedRecognitions != null) {
+            telemetry.addData("# Object Detected", updatedRecognitions.size());
+            // step through the list of recognitions and display boundary info.
+            int i = 0;
+
+            for (Recognition recognition : updatedRecognitions) {
+
+                if (recognition.getLabel() == "orange") {
+                    parkPos = 1;
+                    //A();
+                }
+
+                if (recognition.getLabel() == "red") {
+                    parkPos = 2;
+                    //B();
+                }
+
+                if (recognition.getLabel() == "green") {
+                    parkPos = 3;
+                    //C();
+                }
+            }
+        }
+    return parkPos;
+    }
 }
+
+

@@ -82,7 +82,7 @@ public class AutoNew extends LinearOpMode {
 
         Trajectory splineToA = drive.trajectoryBuilder(new Pose2d())
                 .splineToConstantHeading(new Vector2d(5, 18), Math.toRadians(0))
-                .lineToLinearHeading(new Pose2d(25, 18, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(15, 18, Math.toRadians(0)))
                 .lineToLinearHeading(new Pose2d(45, 18, Math.toRadians(0)))
                 .build();
 

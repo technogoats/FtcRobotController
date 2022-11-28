@@ -58,7 +58,7 @@ public class TestTeleOp extends LinearOpMode {
         //Arm = hardwareMap.get(Servo.class, "Arm");
         //Hand = hardwareMap.get(Servo.class, "Hand");
         //Ducky = hardwareMap.get(CRServo.class, "Ducky");
-       // Ducky = hardwareMap.crservo.get("Ducky");
+        // Ducky = hardwareMap.crservo.get("Ducky");
         //intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
         //Basket = hardwareMap.get(Servo.class, "Basket");
 
@@ -85,7 +85,7 @@ public class TestTeleOp extends LinearOpMode {
 
             //showOdo();
             //telemetry.addData("position", linearSlide.getCurrentPosition());
-           // telemetry.update();
+            // telemetry.update();
             //intakeMotor.setPower(0.8);
 
             if (gamepad1.dpad_up) {
@@ -112,7 +112,6 @@ public class TestTeleOp extends LinearOpMode {
             } else if (gamepad1.left_bumper) {
                 //left turn
                 telemetry.addData("left bumper pressed", "");
-                closeClaw();
                 lowerSlide();
 
             } else if (gamepad1.right_trigger > 0) {
@@ -128,15 +127,18 @@ public class TestTeleOp extends LinearOpMode {
             } else if (gamepad1.x) {
 
             } else if (gamepad1.b) {
-                openClawCap();
+                closeClaw();
+                raiseSlideCone();
 
             } else if (gamepad1.a) {
                 //small junction
+                raiseSlideLowJunk();
 
             } else if (gamepad1.y) {
                 //medium junction
+                raiseSlideMediumJunk();
 
-            } else if (gamepad2.x) {
+            } else if (gamepad1.x) {
 
             } else if (gamepad2.y) {
 
@@ -152,8 +154,11 @@ public class TestTeleOp extends LinearOpMode {
                 //telemetry.addData("sticks", "  left x=" + gamepad1.left_stick_x + "  right y=" + gamepad1.left_stick_y);
                 //telemetry.update();
 
-                motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
-                motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
+                motorBL.setDirection(DcMotorSimple.Direction.FORWARD);
+                motorFL.setDirection(DcMotorSimple.Direction.FORWARD);
+
+                motorBR.setDirection(DcMotorSimple.Direction.REVERSE);
+                motorFR.setDirection(DcMotorSimple.Direction.REVERSE);
 
                 leftX = scaleInput(leftX);
                 leftY = scaleInput(leftY);
@@ -173,6 +178,7 @@ public class TestTeleOp extends LinearOpMode {
                 motorFL.setPower(power *(Range.clip(V1, -1, 1)));
                 motorFR.setPower(power *(Range.clip(V2, -1, 1)));
             }
+
             else {
                 motorBL.setPower(0);
                 motorBR.setPower(0);
@@ -250,6 +256,41 @@ public class TestTeleOp extends LinearOpMode {
         //}
     }
 
+    public void raiseSlideMediumJunk() {
+        //int i = 50;
+        //for (i = 50; i < 1000; i += 100) {
+        sleep(500);
+        slideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        slideLeft.setTargetPosition(2225);
+
+        slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideRight.setTargetPosition(2175);
+        slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        slideRight.setPower(0.9);
+        slideLeft.setPower(0.9);
+        //}
+    }
+
+
+    public void raiseSlideLowJunk() {
+        //int i = 50;
+        //for (i = 50; i < 1000; i += 100) {
+        sleep(500);
+        slideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        slideLeft.setTargetPosition(1335);
+
+        slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideRight.setTargetPosition(1275);
+        slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        slideRight.setPower(0.9);
+        slideLeft.setPower(0.9);
+        //}
+    }
+
     public void raiseSlideCone() {
         //int i = 50;
         //for (i = 50; i < 1000; i += 100) {
@@ -302,85 +343,6 @@ public class TestTeleOp extends LinearOpMode {
         rightClaw.setPosition(0.46);
     }
 
- /*
-    public void RS3() {
-        //linearSlide.setTargetPosition(500);
-        // int i = 50;
-        //for (i = 50; i < 1000; i += 100) {
-        Basket.setPosition(0.8);
-        sleep(500);
-        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        linearSlide.setTargetPosition(1750);
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(0.9);
-    }
-
-    public void RS1() {
-        //linearSlide.setTargetPosition(500);
-
-        // int i = 50;
-        //for (i = 50; i < 1000; i += 100) {
-        Basket.setPosition(0.8);
-        sleep(500);
-        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        // 600 with 1 inch distance works
-        linearSlide.setTargetPosition(600);
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(0.9);
-
-    }
-
-    public void RS2() {
-        //linearSlide.setTargetPosition(500);
-
-        // int i = 50;
-        //for (i = 50; i < 1000; i += 100) {
-        Basket.setPosition(0.8);
-        sleep(500);
-        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        linearSlide.setTargetPosition(900);
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(0.9);
-    }
-
-    public void lowerSlide() {
-        Basket.setPosition(0.8);
-        sleep(1000);
-        linearSlide.setTargetPosition(20);
-        linearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(0.9);
-        sleep(1000);
-        linearSlide.setTargetPosition(0);
-        linearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(0.9);
-    }
-
-    public void raiseBasket() {
-        // Basket.setDirection(Servo.Direction.FORWARD);
-        Basket.setPosition(0);
-    }
-
-    public void lowerBasket() {
-        // Basket.setDirection(Servo.Direction.FORWARD);
-        // Basket.setPosition(0.2);
-        // Basket.setDirection(Servo.Direction.REVERSE);
-        Basket.setPosition(0.8);
-    }
-
-    public void lockBasket() {
-        Basket.setPosition(0.8);
-        sleep(500);
-        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        linearSlide.setTargetPosition(100);
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(0.9);
-    }
-
-
-  */
-
     private void initDriveTrain() {
 
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -431,4 +393,6 @@ public class TestTeleOp extends LinearOpMode {
         }
         return dScale;
     }
+
 }
+
