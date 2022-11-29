@@ -44,7 +44,8 @@ public class TestTeleOp extends LinearOpMode {
     public final double turnSpeed = 0.7;
 
     double   leftX = 0, leftY = 0, rightX = 0, V = 0, W = 0, Right = 0, Left = 0;
-    double r, robotAngle, V1, V2, V3, V4;
+    int rightSlideHeight, leftSlideHeight;
+
 
     public double power = 0.7;
 
@@ -138,9 +139,47 @@ public class TestTeleOp extends LinearOpMode {
                 //medium junction
                 raiseSlideMediumJunk();
 
-            } else if (gamepad1.x) {
+            } else if (gamepad2.right_trigger > 0) {
+                leftSlideHeight = slideLeft.getCurrentPosition();
+                rightSlideHeight = slideRight.getCurrentPosition();
 
-            } else if (gamepad2.y) {
+                if (leftSlideHeight < 3000 && rightSlideHeight <3000) {
+                    slideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+                    slideLeft.setTargetPosition(leftSlideHeight + 100);
+
+                    slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
+                    slideRight.setTargetPosition(rightSlideHeight + 100);
+                    slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    slideRight.setPower(0.9);
+                    slideLeft.setPower(0.9);
+                }
+
+
+            }
+            else if (gamepad2.left_trigger > 0) {
+                leftSlideHeight = slideLeft.getCurrentPosition();
+                rightSlideHeight = slideRight.getCurrentPosition();
+
+                if (leftSlideHeight > 100 && rightSlideHeight > 100) {
+                    slideLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+                    slideLeft.setTargetPosition(leftSlideHeight - 100);
+
+                    slideRight.setDirection(DcMotorSimple.Direction.FORWARD);
+                    slideRight.setTargetPosition(rightSlideHeight - 100);
+                    slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    slideRight.setPower(0.9);
+                    slideLeft.setPower(0.9);
+
+                    sleep(200);
+                }
+
+
+
+            }else if (gamepad2.y) {
 
             } else if (gamepad2.a) {
 
@@ -175,33 +214,6 @@ public class TestTeleOp extends LinearOpMode {
                 motorFL.setPower(turnSpeed *(Range.clip(-rightX, -1, 1)));
                 motorFR.setPower(turnSpeed *(Range.clip(-rightX, -1, 1)));
 
-                /*leftX = gamepad1.right_stick_x;
-
-                motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
-                motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
-
-                motorBR.setDirection(DcMotorSimple.Direction.FORWARD);
-                motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
-
-                leftX = scaleInput(leftX);
-
-
-                r = Math.hypot(leftX, leftY);
-                robotAngle = Math.atan2(leftY, leftX) - Math.PI / 4;
-
-                V1 = r * Math.cos(robotAngle) + leftX;
-                V2 = r * Math.sin(robotAngle) - leftX;
-                V3 = r * Math.sin(robotAngle) + leftX;
-                V4 = r * Math.cos(robotAngle) - leftX;
-
-                telemetry.addData("V1 Clipped = ", + V1 + "V2 Clipped=" + V2 + "V3 Clipped = ", + V3 + "V4 Clipped=" + V4);
-
-                motorBL.setPower(turnSpeed *(Range.clip(V3, -1, 1)));
-                motorBR.setPower(turnSpeed *(Range.clip(V4, -1, 1)));
-                motorFL.setPower(turnSpeed *(Range.clip(V1, -1, 1)));
-                motorFR.setPower(turnSpeed *(Range.clip(V2, -1, 1)));
-
-                 */
 
             }
 
@@ -306,6 +318,7 @@ public class TestTeleOp extends LinearOpMode {
 
         slideRight.setPower(0.9);
         slideLeft.setPower(0.9);
+
         //}
     }
 
@@ -332,10 +345,10 @@ public class TestTeleOp extends LinearOpMode {
         //for (i = 50; i < 1000; i += 100) {
         sleep(500);
         slideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        slideLeft.setTargetPosition(1335);
+        slideLeft.setTargetPosition(1435);
 
         slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        slideRight.setTargetPosition(1275);
+        slideRight.setTargetPosition(1375);
         slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
