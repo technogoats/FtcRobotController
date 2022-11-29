@@ -81,14 +81,14 @@ public class AutoNew extends LinearOpMode {
 
 
         Trajectory splineToA = drive.trajectoryBuilder(new Pose2d())
-                .splineToConstantHeading(new Vector2d(5, 18), Math.toRadians(0))
-                .lineToLinearHeading(new Pose2d(15, 18, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(45, 18, Math.toRadians(0)))
+                .splineToConstantHeading(new Vector2d(5, 20), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(15, 20, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(45, 20, Math.toRadians(0)))
                 .build();
 
 
         Trajectory splineToB = drive.trajectoryBuilder(splineToA.end())
-                .lineToSplineHeading(new Pose2d(57, 8.5, Math.toRadians(-38)))
+                .lineToSplineHeading(new Pose2d(58.5, 12.5, Math.toRadians(-38)))
                 //55 12
                 .build();
 
@@ -136,15 +136,16 @@ public class AutoNew extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            raiseSlideHighJunk();
+
             drive.followTrajectory(splineToA);
             // drive.followTrajectory(splineToAB);
-
+            raiseSlideHighJunk();
+            sleep(2000);
             drive.followTrajectory(splineToB);
-            sleep(1000);
+
 
             openClaw2();
-            sleep(7000);
+            sleep(10000);
             drive.followTrajectory(splineToC);
 
             lowerSlideStack5();

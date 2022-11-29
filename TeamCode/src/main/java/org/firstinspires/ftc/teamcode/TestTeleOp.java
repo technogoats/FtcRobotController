@@ -41,12 +41,12 @@ public class TestTeleOp extends LinearOpMode {
 
     //Wheel stuff
     public final double wheelPower = -0.5;
-    public final double turnSpeed = 0.5;
+    public final double turnSpeed = 0.7;
 
-    double   leftX = 0, leftY = 0, V = 0, W = 0, Right = 0, Left = 0;
+    double   leftX = 0, leftY = 0, rightX = 0, V = 0, W = 0, Right = 0, Left = 0;
     double r, robotAngle, V1, V2, V3, V4;
 
-    public double power = 0.95;
+    public double power = 0.7;
 
     private Blinker expansion_Hub_3;
 
@@ -98,11 +98,11 @@ public class TestTeleOp extends LinearOpMode {
 
             } else if (gamepad1.dpad_right) {
                 //right strafe
-                strafeRight();
+                turnRight();
 
             } else if (gamepad1.dpad_left) {
                 //left strafe
-                strafeLeft();
+                turnLeft();
 
             } else if (gamepad1.right_bumper) {
                 //right turn
@@ -112,7 +112,8 @@ public class TestTeleOp extends LinearOpMode {
             } else if (gamepad1.left_bumper) {
                 //left turn
                 telemetry.addData("left bumper pressed", "");
-                lowerSlide();
+                closeClaw();
+                raiseSlideCone();
 
             } else if (gamepad1.right_trigger > 0) {
                 closeClaw();
@@ -127,8 +128,7 @@ public class TestTeleOp extends LinearOpMode {
             } else if (gamepad1.x) {
 
             } else if (gamepad1.b) {
-                closeClaw();
-                raiseSlideCone();
+                lowerSlide();
 
             } else if (gamepad1.a) {
                 //small junction
@@ -145,23 +145,46 @@ public class TestTeleOp extends LinearOpMode {
             } else if (gamepad2.a) {
 
             }
-            else if (gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0) {
+            else if (gamepad1.left_stick_y != 0) {
 
-                leftX = gamepad1.right_stick_x;
                 leftY = gamepad1.left_stick_y;
 
                 //telemetry.addData("Mode", "running");
                 //telemetry.addData("sticks", "  left x=" + gamepad1.left_stick_x + "  right y=" + gamepad1.left_stick_y);
                 //telemetry.update();
 
-                motorBL.setDirection(DcMotorSimple.Direction.FORWARD);
-                motorFL.setDirection(DcMotorSimple.Direction.FORWARD);
+                resetMotorDirection();
 
-                motorBR.setDirection(DcMotorSimple.Direction.REVERSE);
-                motorFR.setDirection(DcMotorSimple.Direction.REVERSE);
+                leftY = scaleInput(leftY);
+
+
+                motorBL.setPower(power *(Range.clip(leftY, -1, 1)));
+                motorBR.setPower(power *(Range.clip(-leftY, -1, 1)));
+                motorFL.setPower(power *(Range.clip(leftY, -1, 1)));
+                motorFR.setPower(power *(Range.clip(-leftY, -1, 1)));
+            }
+
+            else if (gamepad1.right_stick_x != 0) {
+                rightX = gamepad1.right_stick_x;
+                resetMotorDirection();
+
+                rightX = scaleInput(rightX);
+
+                motorBL.setPower(turnSpeed *(Range.clip(-rightX, -1, 1)));
+                motorBR.setPower(turnSpeed *(Range.clip(-rightX, -1, 1)));
+                motorFL.setPower(turnSpeed *(Range.clip(-rightX, -1, 1)));
+                motorFR.setPower(turnSpeed *(Range.clip(-rightX, -1, 1)));
+
+                /*leftX = gamepad1.right_stick_x;
+
+                motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
+                motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
+
+                motorBR.setDirection(DcMotorSimple.Direction.FORWARD);
+                motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
 
                 leftX = scaleInput(leftX);
-                leftY = scaleInput(leftY);
+
 
                 r = Math.hypot(leftX, leftY);
                 robotAngle = Math.atan2(leftY, leftX) - Math.PI / 4;
@@ -173,10 +196,31 @@ public class TestTeleOp extends LinearOpMode {
 
                 telemetry.addData("V1 Clipped = ", + V1 + "V2 Clipped=" + V2 + "V3 Clipped = ", + V3 + "V4 Clipped=" + V4);
 
-                motorBL.setPower(power *(Range.clip(V3, -1, 1)));
-                motorBR.setPower(power *(Range.clip(V4, -1, 1)));
-                motorFL.setPower(power *(Range.clip(V1, -1, 1)));
-                motorFR.setPower(power *(Range.clip(V2, -1, 1)));
+                motorBL.setPower(turnSpeed *(Range.clip(V3, -1, 1)));
+                motorBR.setPower(turnSpeed *(Range.clip(V4, -1, 1)));
+                motorFL.setPower(turnSpeed *(Range.clip(V1, -1, 1)));
+                motorFR.setPower(turnSpeed *(Range.clip(V2, -1, 1)));
+
+                 */
+
+            }
+
+            else if (gamepad1.left_stick_x != 0) {
+
+                leftX = gamepad1.left_stick_x;
+
+                //telemetry.addData("Mode", "running");
+                //telemetry.addData("sticks", "  left x=" + gamepad1.left_stick_x + "  right y=" + gamepad1.left_stick_y);
+                //telemetry.update();
+
+                resetMotorDirection();
+
+                leftX = scaleInput(leftX);
+
+                motorBL.setPower(power *(Range.clip(leftX, -1, 1)));
+                motorBR.setPower(power *(Range.clip(leftX, -1, 1)));
+                motorFL.setPower(power *(Range.clip(-leftX, -1, 1)));
+                motorFR.setPower(power *(Range.clip(-leftX, -1, 1)));
             }
 
             else {
@@ -184,6 +228,7 @@ public class TestTeleOp extends LinearOpMode {
                 motorBR.setPower(0);
                 motorFR.setPower(0);
                 motorFL.setPower(0);
+                resetMotorDirection();
             }
         }
 
@@ -195,6 +240,14 @@ public class TestTeleOp extends LinearOpMode {
         telemetry.addData("verticalRight TickCount: ", verticalRight.getCurrentPosition());
         telemetry.addData("horizontal TickCount: ", horizontal.getCurrentPosition());
         telemetry.update();
+    }
+
+    public void resetMotorDirection(){
+        motorBL.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorFL.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        motorBR.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public void moveForward() {
