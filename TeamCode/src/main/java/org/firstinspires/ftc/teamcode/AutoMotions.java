@@ -94,23 +94,27 @@ public class AutoMotions extends LinearOpMode {
         }
 
         waitForStart();
+
+
+        int Pos = parkPos();
+
         sleep(3000);
 
-        if (parkPos() == 1){
-            telemetry.addData("Pos: ", parkPos());
+        if (Pos == 1){
+            telemetry.addData("Pos: ", Pos);
             telemetry.update();
         }
-        else if (parkPos() == 2){
-            telemetry.addData("Pos: ", parkPos());
+        else if (Pos == 2){
+            telemetry.addData("Pos: ", Pos);
             telemetry.update();
 
         }
-        else if (parkPos() == 3){
-            telemetry.addData("Pos: ", parkPos());
+        else if (Pos == 3){
+            telemetry.addData("Pos: ", Pos);
             telemetry.update();
         }
-        else if (parkPos() == 0){
-            telemetry.addData("Pos: ", parkPos());
+        else if (Pos == 0){
+            telemetry.addData("Pos: ", Pos);
             telemetry.update();
         }
         sleep(30000);
@@ -257,20 +261,10 @@ public class AutoMotions extends LinearOpMode {
         motorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        closeClaw();
+       // closeClaw();
 
         sleep(1000);
 
-        slideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        slideLeft.setTargetPosition(500);
-
-        slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        slideRight.setTargetPosition(450);
-        slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        slideRight.setPower(0.8);
-        slideLeft.setPower(0.8);
     }
 
     private void initVuforia() {
