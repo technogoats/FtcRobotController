@@ -3,12 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Blinker;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -23,7 +20,7 @@ import java.util.List;
 
 @Autonomous
 
-public class AutoMotions extends LinearOpMode {
+public class BackupPark extends LinearOpMode {
 
     //Wheel motors
     private DcMotor motorBL;
@@ -80,12 +77,9 @@ public class AutoMotions extends LinearOpMode {
 
         expansion_Hub_3 = hardwareMap.get(Blinker.class, "Expansion Hub 3");
 
-
         initVuforia();
         initTfod();
         initDriveTrain();
-
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         if (tfod != null) {
             tfod.activate();
@@ -93,24 +87,73 @@ public class AutoMotions extends LinearOpMode {
 
         }
 
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        Trajectory Park1 = drive.trajectoryBuilder(new Pose2d())
+                .splineToConstantHeading(new Vector2d(2, 20), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(30, 20, Math.toRadians(0)))
+                .build();
+
+        Trajectory Park3 = drive.trajectoryBuilder(new Pose2d())
+                .splineToConstantHeading(new Vector2d(5, -30), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(30, -30, Math.toRadians(0)))
+                .build();
+
+        Trajectory Park2 = drive.trajectoryBuilder(new Pose2d())
+                .splineToConstantHeading(new Vector2d(3, -5), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(30, -5, Math.toRadians(0)))
+                .build();
+
+/*
+        Trajectory Park2 = drive.trajectoryBuilder(new Pose2d())
+                .strafeRight(5)
+                .forward(20)
+                .build();
+
+        Trajectory Park3 = drive.trajectoryBuilder(new Pose2d())
+                .strafeRight(30)
+                .forward(20)
+                .build();
+
+ */
+
         waitForStart();
-        sleep(3000);
 
-        if (parkPos() == 1){
-            telemetry.addData("Pos: ", parkPos());
-            telemetry.update();
+        int Pos = parkPos();
+
+        sleep(5000);
+        /*
+        for (int i = 500; i < 5000; i += 500) {
+            sleep(i);
+            if (Pos != 0) {
+                telemetry.addData("Sleep: ", i);
+                telemetry.update();
+                break;
+            }
         }
-        else if (parkPos() == 2){
-            telemetry.addData("Pos: ", parkPos());
+
+         */
+
+        if (Pos == 1){
+            telemetry.addData("Pos: ", Pos);
             telemetry.update();
+            drive.followTrajectory(Park1);
+            //drive.followTrajectory(Park12);
 
         }
-        else if (parkPos() == 3){
-            telemetry.addData("Pos: ", parkPos());
+        else if (Pos == 2){
+            telemetry.addData("Pos: ", Pos);
             telemetry.update();
+            drive.followTrajectory(Park2);
+
         }
-        else if (parkPos() == 0){
-            telemetry.addData("Pos: ", parkPos());
+        else if (Pos == 3){
+            telemetry.addData("Pos: ", Pos);
+            telemetry.update();
+            drive.followTrajectory(Park3);
+        }
+        else if (Pos == 0){
+            telemetry.addData("Pos: ", Pos);
             telemetry.update();
         }
         sleep(30000);
@@ -257,20 +300,10 @@ public class AutoMotions extends LinearOpMode {
         motorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        closeClaw();
+        // closeClaw();
 
         sleep(1000);
 
-        slideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        slideLeft.setTargetPosition(500);
-
-        slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        slideRight.setTargetPosition(450);
-        slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        slideRight.setPower(0.8);
-        slideLeft.setPower(0.8);
     }
 
     private void initVuforia() {
@@ -303,7 +336,7 @@ public class AutoMotions extends LinearOpMode {
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+        //tfod.loadModelFromFile(TFOD_MODEL_ASSET, LABELS);
     }
 
     public int parkPos() {
@@ -337,8 +370,9 @@ public class AutoMotions extends LinearOpMode {
                 }
             }
         }
-    return parkPos;
+        return parkPos;
     }
 }
+
 
 
