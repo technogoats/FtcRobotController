@@ -218,7 +218,7 @@ public class BackupPark extends LinearOpMode {
         slideLeft.setTargetPosition(3100);
 
         slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        slideRight.setTargetPosition(3050);
+        slideRight.setTargetPosition(3100);
         slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -235,7 +235,7 @@ public class BackupPark extends LinearOpMode {
         slideLeft.setTargetPosition(200);
 
         slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        slideRight.setTargetPosition(150);
+        slideRight.setTargetPosition(200);
         slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 

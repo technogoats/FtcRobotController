@@ -13,9 +13,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+
+import java.util.List;
 
 @Autonomous
 
@@ -77,8 +82,19 @@ public class AutoNew extends LinearOpMode {
         expansion_Hub_3 = hardwareMap.get(Blinker.class, "Expansion Hub 3");
         initDriveTrain();
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        /*
+        initVuforia();
+        initTfod();
 
+        if (tfod != null) {
+            tfod.activate();
+            tfod.setZoom(1, 16.0/9.0);
+
+        }
+      
+         */
+
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         Trajectory splineToA = drive.trajectoryBuilder(new Pose2d())
                 .splineToConstantHeading(new Vector2d(5, 20), Math.toRadians(0))
@@ -86,27 +102,26 @@ public class AutoNew extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(45, 20, Math.toRadians(0)))
                 .build();
 
-
         Trajectory splineToB = drive.trajectoryBuilder(splineToA.end())
                 .lineToSplineHeading(new Pose2d(60.5, 14.5, Math.toRadians(-38)))
                 //55 12
                 .build();
 
         Trajectory splineToC = drive.trajectoryBuilder(splineToB.end())
-                .lineToSplineHeading(new Pose2d(46.5, 16, Math.toRadians(-90)))
+                .lineToSplineHeading(new Pose2d(50.5, 16, Math.toRadians(-90)))
                 //47.5
                 .build();
 
         Trajectory splineToD = drive.trajectoryBuilder(splineToC.end())
-                .forward(48)
+                .lineToLinearHeading(new Pose2d(54, -29, Math.toRadians(-90)))
                 .build();
 
         Trajectory splineToE = drive.trajectoryBuilder(splineToD.end())
-                .lineToLinearHeading(new Pose2d(47.5, 0, Math.toRadians(34)))
+                .lineToLinearHeading(new Pose2d(50.5, 0, Math.toRadians(35)))
                 .build();
 
         Trajectory splineToF = drive.trajectoryBuilder(splineToE.end())
-                .forward(6)
+                .forward(15)
                 .build();
 
         Trajectory splineToFG = drive.trajectoryBuilder(splineToE.end())
@@ -138,14 +153,13 @@ public class AutoNew extends LinearOpMode {
         while (opModeIsActive()) {
 
             drive.followTrajectory(splineToA);
-            // drive.followTrajectory(splineToAB);
+
             raiseSlideHighJunk();
             sleep(2000);
             drive.followTrajectory(splineToB);
 
-
             openClaw2();
-            sleep(10000);
+           // sleep(10000);
             drive.followTrajectory(splineToC);
 
             lowerSlideStack5();
@@ -154,11 +168,14 @@ public class AutoNew extends LinearOpMode {
             closeClaw();
             sleep(1000);
             raiseSlideHighJunk();
+            sleep(50000);
+
             drive.followTrajectory(splineToE);
+
             drive.followTrajectory(splineToF);
             //sleep(3000);
-            openClaw();
-            lowerSlideStack4();
+            //openClaw();
+            //lowerSlideStack4();
             sleep(500);
             drive.followTrajectory(splineToFG);
 
@@ -169,7 +186,6 @@ public class AutoNew extends LinearOpMode {
             sleep(30000);
 
             //break;
-
         }
 
     }
@@ -249,7 +265,7 @@ public class AutoNew extends LinearOpMode {
         slideLeft.setTargetPosition(200);
 
         slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        slideRight.setTargetPosition(150);
+        slideRight.setTargetPosition(200);
         slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -280,7 +296,7 @@ public class AutoNew extends LinearOpMode {
         slideLeft.setTargetPosition(600);
 
         slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        slideRight.setTargetPosition(550);
+        slideRight.setTargetPosition(600);
 
         slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -295,7 +311,7 @@ public class AutoNew extends LinearOpMode {
         slideLeft.setTargetPosition(550);
 
         slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        slideRight.setTargetPosition(500);
+        slideRight.setTargetPosition(550);
 
         slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -358,6 +374,7 @@ public class AutoNew extends LinearOpMode {
 
         sleep(1000);
 
+
         slideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         slideLeft.setTargetPosition(500);
 
@@ -372,5 +389,74 @@ public class AutoNew extends LinearOpMode {
 
     }
 
+    private void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
+    }
+
+    /**
+     * Initialize the TensorFlow Object Detection engine.
+     */
+    private void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.6f;
+        tfodParameters.isModelTensorFlow2 = true;
+        tfodParameters.inputSize = 640;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+
+        // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
+        // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        //tfod.loadModelFromFile(TFOD_MODEL_ASSET, LABELS);
+    }
+
+    public int parkPos() {
+        if (tfod == null)
+            telemetry.addData("tfod is not active  ", "");
+        else
+            telemetry.addData("tfod is  active  ", "");
+        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+        int parkPos = 0;
+
+        if (updatedRecognitions != null) {
+            telemetry.addData("# Object Detected", updatedRecognitions.size());
+            // step through the list of recognitions and display boundary info.
+            int i = 0;
+
+            for (Recognition recognition : updatedRecognitions) {
+
+                if (recognition.getLabel() == "orange") {
+                    parkPos = 1;
+                    //A();
+                }
+
+                if (recognition.getLabel() == "red") {
+                    parkPos = 2;
+                    //B();
+                }
+
+                if (recognition.getLabel() == "green") {
+                    parkPos = 3;
+                    //C();
+                }
+            }
+        }
+        return parkPos;
+    }
 }
+
+
+
 
